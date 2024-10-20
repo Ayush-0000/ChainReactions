@@ -28,6 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="About" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/text"
+            android:text="@string/about"/>
 
         <Button
             style="@style/button"
