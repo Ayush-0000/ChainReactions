@@ -15,7 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class GameActivity : AppCompatActivity() {
-    private val number = 6
+    private val number = 5
     private val a = Array(number) { arrayOfNulls<Button>(number) }
     private val aa = Array(number) { IntArray(number) }
     private val bb = Array(number) { CharArray(number) }
@@ -70,12 +70,6 @@ class GameActivity : AppCompatActivity() {
         a[4][4] = findViewById(R.id.e5)
         a[4][5] = findViewById(R.id.e6)
 
-        a[5][0] = findViewById(R.id.f1)
-        a[5][1] = findViewById(R.id.f2)
-        a[5][2] = findViewById(R.id.f3)
-        a[5][3] = findViewById(R.id.f4)
-        a[5][4] = findViewById(R.id.f5)
-        a[5][5] = findViewById(R.id.f6)
 
         a[0][0]?.setOnClickListener { /* Handle click */ }
         for (y in 0 until number) {
@@ -88,7 +82,7 @@ class GameActivity : AppCompatActivity() {
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val mf = menuInflater
-        mf.inflate(R.menu.main_menu, menu)
+        mf.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -137,9 +131,9 @@ class GameActivity : AppCompatActivity() {
             if (bb[i][j] == 'n') {
                 aa[i][j] = 1
                 bb[i][j] = source
-                a[i][j].text = aa[i][j].toString()
+                a[i][j]?.text = aa[i][j].toString()
                 val bcol = if (source == 'g') Color.GREEN else Color.RED
-                a[i][j].setBackgroundColor(bcol)
+                a[i][j]?.setBackgroundColor(bcol)
             } else {
                 if (bb[i][j] != source) {
                     display("Invalid move")
@@ -148,12 +142,12 @@ class GameActivity : AppCompatActivity() {
                 } else {
                     if (aa[i][j] < pos) {
                         aa[i][j] += 1
-                        a[i][j].text = aa[i][j].toString()
+                        a[i][j]?.text = aa[i][j].toString()
                     } else {
                         aa[i][j] = 0
                         bb[i][j] = 'n'
-                        a[i][j].text = ""
-                        a[i][j].setBackgroundColor(dcol)
+                        a[i][j]?.text = ""
+                        a[i][j]?.setBackgroundColor(dcol)
                         try {
                             chal(i - 1, j, source, true)
                         } catch (e: Exception) {}
@@ -173,21 +167,21 @@ class GameActivity : AppCompatActivity() {
             if (bb[i][j] == 'n') {
                 aa[i][j] = 1
                 bb[i][j] = source
-                a[i][j].text = aa[i][j].toString()
+                a[i][j]?.text = aa[i][j].toString()
                 val bcol = if (source == 'g') Color.GREEN else Color.RED
-                a[i][j].setBackgroundColor(bcol)
+                a[i][j]?.setBackgroundColor(bcol)
             } else {
                 bb[i][j] = source
                 if (aa[i][j] < pos) {
                     aa[i][j] += 1
-                    a[i][j].text = aa[i][j].toString()
+                    a[i][j]?.text = aa[i][j].toString()
                     val bcol = if (source == 'g') Color.GREEN else Color.RED
-                    a[i][j].setBackgroundColor(bcol)
+                    a[i][j]?.setBackgroundColor(bcol)
                 } else {
                     aa[i][j] = 0
                     bb[i][j] = 'n'
-                    a[i][j].text = ""
-                    a[i][j].setBackgroundColor(dcol)
+                    a[i][j]?.text = ""
+                    a[i][j]?.setBackgroundColor(dcol)
                     try {
                         chal(i - 1, j, source, true)
                     } catch (e: Exception) {}
@@ -240,8 +234,5 @@ class GameActivity : AppCompatActivity() {
     private fun display(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
-
-
-
 
 }

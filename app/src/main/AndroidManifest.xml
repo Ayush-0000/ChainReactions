@@ -22,9 +22,6 @@
             android:name=".Instruction"
             android:exported="false" />
         <activity
-            android:name=".GameCat"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
