@@ -20,9 +20,12 @@ class GameActivity : AppCompatActivity() {
     private val aa = Array(number) { IntArray(number) }
     private val bb = Array(number) { CharArray(number) }
     private var turn = 0
-
     private lateinit var rs: Resources
     private var dcol: Int = 0
+    private var fsource: Char = 'g'
+    private var greenScore = 0
+    private var redScore = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,51 +35,50 @@ class GameActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         rs = this.resources
         dcol = rs.getColor(R.color.blockBack)
 
-        a[0][0] = findViewById(R.id.a1)
-        a[0][1] = findViewById(R.id.a2)
-        a[0][2] = findViewById(R.id.a3)
-        a[0][3] = findViewById(R.id.a4)
-        a[0][4] = findViewById(R.id.a5)
+        initializeGrid()
+        setupGame()
+    }
 
-        a[1][0] = findViewById(R.id.b1)
-        a[1][1] = findViewById(R.id.b2)
-        a[1][2] = findViewById(R.id.b3)
-        a[1][3] = findViewById(R.id.b4)
-        a[1][4] = findViewById(R.id.b5)
+    private fun initializeGrid() {
+        val buttonIds = listOf(
+            R.id.a1, R.id.a2, R.id.a3, R.id.a4, R.id.a5,
+            R.id.b1, R.id.b2, R.id.b3, R.id.b4, R.id.b5,
+            R.id.c1, R.id.c2, R.id.c3, R.id.c4, R.id.c5,
+            R.id.d1, R.id.d2, R.id.d3, R.id.d4, R.id.d5,
+            R.id.e1, R.id.e2, R.id.e3, R.id.e4, R.id.e5
+        )
 
-        a[2][0] = findViewById(R.id.c1)
-        a[2][1] = findViewById(R.id.c2)
-        a[2][2] = findViewById(R.id.c3)
-        a[2][3] = findViewById(R.id.c4)
-        a[2][4] = findViewById(R.id.c5)
-
-        a[3][0] = findViewById(R.id.d1)
-        a[3][1] = findViewById(R.id.d2)
-        a[3][2] = findViewById(R.id.d3)
-        a[3][3] = findViewById(R.id.d4)
-        a[3][4] = findViewById(R.id.d5)
-
-        a[4][0] = findViewById(R.id.e1)
-        a[4][1] = findViewById(R.id.e2)
-        a[4][2] = findViewById(R.id.e3)
-        a[4][3] = findViewById(R.id.e4)
-        a[4][4] = findViewById(R.id.e5)
-
-        a[0][0]?.setOnClickListener { /* Handle click */ }
-        for (y in 0 until number) {
-            for (z in 0 until number) {
-                a[y][z]?.setOnClickListener { /* Handle click */ }
-                aa[y][z] = 0
-                bb[y][z] = 'n'
+        for (i in 0 until number) {
+            for (j in 0 until number) {
+                a[i][j] = findViewById(buttonIds[i * number + j])
+                a[i][j]?.setOnClickListener { onClick(it) }
+                aa[i][j] = 0
+                bb[i][j] = 'n'
             }
         }
     }
+
+    private fun setupGame() {
+        turn = 0
+        fsource = 'g'
+        greenScore = 0
+        redScore = 0
+        for (i in 0 until number) {
+            for (j in 0 until number) {
+                aa[i][j] = 0
+                bb[i][j] = 'n'
+                a[i][j]?.text = ""
+                a[i][j]?.setBackgroundColor(dcol)
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val mf = menuInflater
-        mf.inflate(R.menu.main_menu, menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -86,18 +88,16 @@ class GameActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private var fsource: Char = 'g'
-
     fun onClick(view: View) {
         val b = view as Button
-
         for (i in 0 until number) {
             for (k in 0 until number) {
                 if (b == a[i][k]) {
                     try {
                         turn++
                         chal(i, k, fsource, false)
-                        isWon()
+                        updateScores()
+                        checkVictoryConditions()
                         fsource = if (fsource == 'g') 'r' else 'g'
                     } catch (e: Exception) {
                         display(e.toString())
@@ -107,129 +107,133 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-// a=button
-// aa=number
-// bb=char
-// pos= 3(Center), 2(Edge), 1(Corner)
-
     @Throws(Exception::class)
     private fun chal(i: Int, j: Int, source: Char, isRec: Boolean) {
-        var pos = 3
-        if ((i == 0 && j == 0) || (i == number - 1 && j == number - 1) || (i == 0 && j == number - 1) || (i == number - 1 && j == 0)) {
-            pos = 1
-        } else if (i == 0 || i == number - 1 || j == 0 || j == number - 1) {
-            pos = 2
-        }
+        val pos = getMaxValue(i, j)
 
         if (!isRec) {
-            if (bb[i][j] == 'n') {
-                aa[i][j] = 1
-                bb[i][j] = source
-                a[i][j]?.text = aa[i][j].toString()
-                val bcol = if (source == 'g') Color.GREEN else Color.RED
-                a[i][j]?.setBackgroundColor(bcol)
-            } else {
-                if (bb[i][j] != source) {
+            when {
+                bb[i][j] == 'n' -> {
+                    aa[i][j] = 1
+                    bb[i][j] = source
+                    updateSquareUI(i, j)
+                }
+                bb[i][j] != source -> {
                     display("Invalid move")
                     fsource = if (fsource == 'g') 'r' else 'g'
                     turn--
-                } else {
-                    if (aa[i][j] < pos) {
-                        aa[i][j] += 1
-                        a[i][j]?.text = aa[i][j].toString()
-                    } else {
-                        aa[i][j] = 0
-                        bb[i][j] = 'n'
-                        a[i][j]?.text = ""
-                        a[i][j]?.setBackgroundColor(dcol)
-                        try {
-                            chal(i - 1, j, source, true)
-                        } catch (e: Exception) {}
-                        try {
-                            chal(i + 1, j, source, true)
-                        } catch (e: Exception) {}
-                        try {
-                            chal(i, j - 1, source, true)
-                        } catch (e: Exception) {}
-                        try {
-                            chal(i, j + 1, source, true)
-                        } catch (e: Exception) {}
-                    }
                 }
+                aa[i][j] < pos -> {
+                    aa[i][j]++
+                    updateSquareUI(i, j)
+                }
+                else -> collapse(i, j, source)
             }
-        } else { // isRec == true
-            if (bb[i][j] == 'n') {
-                aa[i][j] = 1
-                bb[i][j] = source
-                a[i][j]?.text = aa[i][j].toString()
-                val bcol = if (source == 'g') Color.GREEN else Color.RED
-                a[i][j]?.setBackgroundColor(bcol)
-            } else {
-                bb[i][j] = source
-                if (aa[i][j] < pos) {
-                    aa[i][j] += 1
-                    a[i][j]?.text = aa[i][j].toString()
-                    val bcol = if (source == 'g') Color.GREEN else Color.RED
-                    a[i][j]?.setBackgroundColor(bcol)
-                } else {
-                    aa[i][j] = 0
-                    bb[i][j] = 'n'
-                    a[i][j]?.text = ""
-                    a[i][j]?.setBackgroundColor(dcol)
-                    try {
-                        chal(i - 1, j, source, true)
-                    } catch (e: Exception) {}
-                    try {
-                        chal(i + 1, j, source, true)
-                    } catch (e: Exception) {}
-                    try {
-                        chal(i, j - 1, source, true)
-                    } catch (e: Exception) {}
-                    try {
-                        chal(i, j + 1, source, true)
-                    } catch (e: Exception) {}
+        } else {
+            bb[i][j] = source
+            when {
+                aa[i][j] < pos -> {
+                    aa[i][j]++
+                    updateSquareUI(i, j)
                 }
+                else -> collapse(i, j, source)
             }
         }
-    } // chal END
+    }
 
-    private fun isWon() {
-        var gWon = true
-        var rWon = true
-        if (turn > 2) {
-            for (i in 0 until number) {
-                for (k in 0 until number) {
-                    when (bb[i][k]) {
-                        'r' -> gWon = false
-                        'g' -> rWon = false
-                    }
+    private fun collapse(i: Int, j: Int, source: Char) {
+        aa[i][j] = 0
+        bb[i][j] = 'n'
+        updateSquareUI(i, j)
+
+        val directions = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
+        for ((dx, dy) in directions) {
+            try {
+                chal(i + dx, j + dy, source, true)
+            } catch (e: Exception) {}
+        }
+    }
+
+    private fun updateSquareUI(i: Int, j: Int) {
+        a[i][j]?.text = if (aa[i][j] > 0) aa[i][j].toString() else ""
+        val bcol = when (bb[i][j]) {
+            'g' -> Color.GREEN
+            'r' -> Color.RED
+            else -> dcol
+        }
+        a[i][j]?.setBackgroundColor(bcol)
+    }
+
+    private fun updateScores() {
+        greenScore = 0
+        redScore = 0
+        for (i in 0 until number) {
+            for (j in 0 until number) {
+                when (bb[i][j]) {
+                    'g' -> greenScore++
+                    'r' -> redScore++
                 }
-            }
-            if (gWon) {
-                display("Green Won")
-                val intent = Intent(this, Winner::class.java).apply {
-                    putExtra("which", "easy")
-                    putExtra("who", "green")
-                    putExtra("turn", turn)
-                }
-                startActivity(intent)
-            } else if (rWon) {
-                display("Red Won")
-                val intent = Intent(this, Winner::class.java).apply {
-                    putExtra("which", "easy")
-                    putExtra("who", "red")
-                    putExtra("turn", turn)
-                }
-                startActivity(intent)
             }
         }
-    } // isWon END
+    }
+
+    private fun checkVictoryConditions() {
+        when {
+            greenScore >= 10 -> endGame("Green")
+            redScore >= 10 -> endGame("Red")
+            isGameOver() -> {
+                when {
+                    greenScore > redScore -> endGame("Green")
+                    redScore > greenScore -> endGame("Red")
+                    else -> endGame("Draw")
+                }
+            }
+        }
+    }
+
+    private fun isGameOver(): Boolean {
+        for (i in 0 until number) {
+            for (j in 0 until number) {
+                if (bb[i][j] == 'n' || aa[i][j] < getMaxValue(i, j)) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun getMaxValue(i: Int, j: Int): Int {
+        return when {
+            (i == 0 && j == 0) || (i == number - 1 && j == number - 1) ||
+                    (i == 0 && j == number - 1) || (i == number - 1 && j == 0) -> 1
+            i == 0 || i == number - 1 || j == 0 || j == number - 1 -> 2
+            else -> 3
+        }
+    }
+
+    private fun endGame(winner: String) {
+        val message = when (winner) {
+            "Green" -> "Green Won"
+            "Red" -> "Red Won"
+            else -> "It's a Draw"
+        }
+        display(message)
+        startWinnerActivity(winner.toLowerCase())
+    }
+
+    private fun startWinnerActivity(winner: String) {
+        val intent = Intent(this, Winner::class.java).apply {
+            putExtra("which", "easy")
+            putExtra("who", winner)
+            putExtra("turn", turn)
+            putExtra("greenScore", greenScore)
+            putExtra("redScore", redScore)
+        }
+        startActivity(intent)
+        finish() // End this activity to prevent going back to the game
+    }
 
     private fun display(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
-
-
-
-
 }
