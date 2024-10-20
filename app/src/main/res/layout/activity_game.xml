@@ -10,22 +10,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".GameActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/title"
+        android:text="@string/app_name"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/title"
-            android:text="@string/app_name"/>
+
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -45,13 +50,12 @@
                 style="@style/block_easy"
                 android:id="@+id/a5"/>
 
-
         </LinearLayout>
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
             <Button
                 style="@style/block_easy"
                 android:id="@+id/b1"/>
@@ -68,9 +72,9 @@
                 style="@style/block_easy"
                 android:id="@+id/b5"/>
 
-
         </LinearLayout>
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -90,9 +94,9 @@
                 style="@style/block_easy"
                 android:id="@+id/c5"/>
 
-
         </LinearLayout>
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -112,9 +116,9 @@
                 style="@style/block_easy"
                 android:id="@+id/d5"/>
 
-
         </LinearLayout>
         <LinearLayout
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -135,31 +139,7 @@
                 android:id="@+id/e5"/>
 
 
-
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                style="@style/block_easy"
-                android:id="@+id/f1"/>
-            <Button
-                style="@style/block_easy"
-                android:id="@+id/f2"/>
-            <Button
-                style="@style/block_easy"
-                android:id="@+id/f3"/>
-            <Button
-                style="@style/block_easy"
-                android:id="@+id/f4"/>
-            <Button
-                style="@style/block_easy"
-                android:id="@+id/f5"/>
-
-
-        </LinearLayout>
-
 
 
     </LinearLayout>

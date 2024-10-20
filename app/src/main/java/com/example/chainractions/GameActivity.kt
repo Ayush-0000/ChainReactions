@@ -40,36 +40,30 @@ class GameActivity : AppCompatActivity() {
         a[0][2] = findViewById(R.id.a3)
         a[0][3] = findViewById(R.id.a4)
         a[0][4] = findViewById(R.id.a5)
-        a[0][5] = findViewById(R.id.a6)
 
         a[1][0] = findViewById(R.id.b1)
         a[1][1] = findViewById(R.id.b2)
         a[1][2] = findViewById(R.id.b3)
         a[1][3] = findViewById(R.id.b4)
         a[1][4] = findViewById(R.id.b5)
-        a[1][5] = findViewById(R.id.b6)
 
         a[2][0] = findViewById(R.id.c1)
         a[2][1] = findViewById(R.id.c2)
         a[2][2] = findViewById(R.id.c3)
         a[2][3] = findViewById(R.id.c4)
         a[2][4] = findViewById(R.id.c5)
-        a[2][5] = findViewById(R.id.c6)
 
         a[3][0] = findViewById(R.id.d1)
         a[3][1] = findViewById(R.id.d2)
         a[3][2] = findViewById(R.id.d3)
         a[3][3] = findViewById(R.id.d4)
         a[3][4] = findViewById(R.id.d5)
-        a[3][5] = findViewById(R.id.d6)
 
         a[4][0] = findViewById(R.id.e1)
         a[4][1] = findViewById(R.id.e2)
         a[4][2] = findViewById(R.id.e3)
         a[4][3] = findViewById(R.id.e4)
         a[4][4] = findViewById(R.id.e5)
-        a[4][5] = findViewById(R.id.e6)
-
 
         a[0][0]?.setOnClickListener { /* Handle click */ }
         for (y in 0 until number) {
@@ -82,7 +76,7 @@ class GameActivity : AppCompatActivity() {
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val mf = menuInflater
-        mf.inflate(R.menu.menu, menu)
+        mf.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -94,7 +88,7 @@ class GameActivity : AppCompatActivity() {
 
     private var fsource: Char = 'g'
 
-    override fun onClick(view: View) {
+    fun onClick(view: View) {
         val b = view as Button
 
         for (i in 0 until number) {
@@ -234,5 +228,8 @@ class GameActivity : AppCompatActivity() {
     private fun display(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
+
+
+
 
 }
