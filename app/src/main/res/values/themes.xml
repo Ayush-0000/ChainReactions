@@ -32,13 +32,6 @@
         <item name="android:layout_margin">@dimen/blockMar</item>
     </style>
 
-    <style name="block_easy">
-        <item name="android:layout_height">@dimen/eblockHei</item>
-        <item name="android:layout_width">@dimen/eblockWid</item>
-        <item name="android:background">@color/blockBack</item>
-        <item name="android:padding">@dimen/eblockPad</item>
-        <item name="android:layout_margin">@dimen/eblockMar</item>
-    </style>
 
     <style name="block_medium">
         <item name="android:layout_height">@dimen/mblockHei</item>
@@ -48,6 +41,14 @@
         <item name="android:layout_margin">@dimen/mblockMar</item>
     </style>
 
+    <style name="blockK" parent="@android:style/Widget.ImageButton">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item> <!-- Optional ripple effect -->
+        <item name="android:contentDescription">Button</item> <!-- Default content description -->
+    </style>
 
 
     <style name="text">

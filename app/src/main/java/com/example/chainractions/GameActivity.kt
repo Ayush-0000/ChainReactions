@@ -2,12 +2,11 @@ package com.example.chainractions
 
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat
 
 class GameActivity : AppCompatActivity() {
     private val number = 5
-    private val a = Array(number) { arrayOfNulls<Button>(number) }
+    private val a = Array(number) { arrayOfNulls<ImageButton>(number) }
     private val aa = Array(number) { IntArray(number) }
     private val bb = Array(number) { CharArray(number) }
     private var turn = 0
@@ -71,7 +70,7 @@ class GameActivity : AppCompatActivity() {
             for (j in 0 until number) {
                 aa[i][j] = 0
                 bb[i][j] = 'n'
-                a[i][j]?.text = ""
+                a[i][j]?.setImageResource(android.R.color.transparent)
                 a[i][j]?.setBackgroundColor(dcol)
             }
         }
@@ -89,7 +88,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-        val b = view as Button
+        val b = view as ImageButton
         for (i in 0 until number) {
             for (k in 0 until number) {
                 if (b == a[i][k]) {
@@ -119,9 +118,14 @@ class GameActivity : AppCompatActivity() {
                     updateSquareUI(i, j)
                 }
                 bb[i][j] != source -> {
-                    display("Invalid move")
-                    fsource = if (fsource == 'g') 'r' else 'g'
-                    turn--
+                    if (aa[i][j] < pos) {
+                        display("Invalid move")
+                        fsource = if (fsource == 'g') 'r' else 'g'
+                        turn--
+                        return
+                    } else {
+                        collapse(i, j, source)
+                    }
                 }
                 aa[i][j] < pos -> {
                     aa[i][j]++
@@ -130,7 +134,7 @@ class GameActivity : AppCompatActivity() {
                 else -> collapse(i, j, source)
             }
         } else {
-            bb[i][j] = source
+            bb[i][j] = source  // Always change ownership in recursive calls
             when {
                 aa[i][j] < pos -> {
                     aa[i][j]++
@@ -141,6 +145,7 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+
     private fun collapse(i: Int, j: Int, source: Char) {
         aa[i][j] = 0
         bb[i][j] = 'n'
@@ -148,20 +153,34 @@ class GameActivity : AppCompatActivity() {
 
         val directions = listOf(-1 to 0, 1 to 0, 0 to -1, 0 to 1)
         for ((dx, dy) in directions) {
-            try {
-                chal(i + dx, j + dy, source, true)
-            } catch (e: Exception) {}
+            val newI = i + dx
+            val newJ = j + dy
+            if (newI in 0 until number && newJ in 0 until number) {
+                chal(newI, newJ, source, true)
+            }
         }
     }
 
+
     private fun updateSquareUI(i: Int, j: Int) {
-        a[i][j]?.text = if (aa[i][j] > 0) aa[i][j].toString() else ""
-        val bcol = when (bb[i][j]) {
-            'g' -> Color.GREEN
-            'r' -> Color.RED
-            else -> dcol
+        val imageResource = when {
+            bb[i][j] == 'g' -> when (aa[i][j]) {
+                1 -> R.drawable.green_1
+                2 -> R.drawable.green_2
+                3 -> R.drawable.green_3
+                4 -> R.drawable.green_1
+                else -> android.R.color.transparent
+            }
+            bb[i][j] == 'r' -> when (aa[i][j]) {
+                1 -> R.drawable.red_1
+                2 -> R.drawable.red_2
+                3 -> R.drawable.red_3
+                4 -> R.drawable.red_1
+                else -> android.R.color.transparent
+            }
+            else -> android.R.color.transparent
         }
-        a[i][j]?.setBackgroundColor(bcol)
+        a[i][j]?.setImageResource(imageResource)
     }
 
     private fun updateScores() {
