@@ -65,10 +65,13 @@ class GameActivity : AppCompatActivity() {
         a[4][3] = findViewById(R.id.e4)
         a[4][4] = findViewById(R.id.e5)
 
-        a[0][0]?.setOnClickListener { /* Handle click */ }
+//        a[0][0]?.setOnClickListener { /* Handle click */ }
+
         for (y in 0 until number) {
             for (z in 0 until number) {
-                a[y][z]?.setOnClickListener { /* Handle click */ }
+                a[y][z]?.setOnClickListener {
+                    onClick(y,z)
+                }
                 aa[y][z] = 0
                 bb[y][z] = 'n'
             }
@@ -88,8 +91,7 @@ class GameActivity : AppCompatActivity() {
 
     private var fsource: Char = 'g'
 
-    fun onClick(view: View) {
-        val b = view as Button
+    fun onClick(y: Int , z: Int) {
 
         for (i in 0 until number) {
             for (k in 0 until number) {
